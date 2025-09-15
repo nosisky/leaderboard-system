@@ -36,7 +36,6 @@ export const submitScore: APIGatewayProxyHandler = async (event) => {
     }));
 
     if (score > 1000) {
-      logger.info("About to broadcast high score", { score });
       const message: WebSocketMessage = {
         type: "HIGH_SCORE",
         user_name: authUser.username,
@@ -56,10 +55,8 @@ export const submitScore: APIGatewayProxyHandler = async (event) => {
 
 export const getLeaderboard: APIGatewayProxyHandler = async (event) => {
   try {
-    logger.info("Getting leaderboard", { event });
     const authUser = await requireAuth(event);
     
-    logger.info("Auth user", { authUser });
     
 
     const result = await dynamo.send(new ScanCommand({ TableName: TABLE_NAME }));
