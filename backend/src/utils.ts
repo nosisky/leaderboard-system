@@ -190,14 +190,12 @@ export async function broadcastToAllConnections(
       return;
     };
 
-    logger.info("Getting active connections", { WEBSOCKET_URL });
     const connections = await getActiveConnections();
     if (!connections.length) {
       logger.error("No active connections found");
       return;
     }
 
-    logger.info("Creating websocket client", { WEBSOCKET_URL });
     const wsClient = new ApiGatewayManagementApiClient({
       endpoint: WEBSOCKET_URL.replace("wss://", "https://").replace(
         "/production",
@@ -228,7 +226,6 @@ export async function broadcastToAllConnectionsHybrid(message: any, websocketUrl
 
   if (!useAwsSocket) {
     // For single-port server, broadcasting is handled in app.ts
-    logger.info('Local WebSocket broadcast handled by app.ts');
   } else {
     await broadcastToAllConnections(message, websocketUrl);
   }

@@ -6,6 +6,7 @@ import cors from 'cors';
 import { signup, login, confirm } from "./handlers/auth";
 import { submitScore, getLeaderboard } from "./handlers/scores";
 import { requireAuth } from "./utils";
+import { logger } from './logger';
 
 const app = express();
 const server = createServer(app);
@@ -91,7 +92,7 @@ app.post('/submit', async (req, res) => {
 
           broadcastToAllConnections(message);
         } catch (authError) {
-          console.log('Auth error during broadcast:', authError);
+          logger.error('Auth error during broadcast:', authError);
         }
       }
     }
@@ -146,15 +147,14 @@ function broadcastToAllConnections(message: any) {
     }
   }
 
-  console.log(`Broadcast sent to ${sent} connections`);
 }
 
 const PORT = process.env.PORT || 8080;
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`HTTP API: http://localhost:${PORT}`);
-  console.log(`WebSocket: ws://localhost:${PORT}`);
+  logger.info(`Server running on port ${PORT}`);
+  logger.info(`HTTP API: http://localhost:${PORT}`);
+  logger.info(`WebSocket: ws://localhost:${PORT}`);
 });
 
 export default app;
