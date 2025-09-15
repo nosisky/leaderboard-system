@@ -1,8 +1,6 @@
 import {
   DynamoDBClient,
   ScanCommand,
-  DeleteItemCommand,
-  UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import {
   ApiGatewayManagementApiClient,
@@ -236,27 +234,5 @@ export async function broadcastToAllConnectionsHybrid(message: any, websocketUrl
   }
 }
 
-export async function updateConnectionHeartbeat(connectionId: string) {
-  try {
-    await dynamo.send(
-      new UpdateItemCommand({
-        TableName: CONNECTIONS_TABLE,
-        Key: { connectionId: { S: connectionId } },
-        UpdateExpression: "SET #lastSeen = :lastSeen, #ttl = :ttl",
-        ExpressionAttributeNames: { "#lastSeen": "lastSeen", "#ttl": "ttl" },
-        ExpressionAttributeValues: {
-          ":lastSeen": { N: Date.now().toString() },
-          ":ttl": {
-            N: Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000).toString(),
-          },
-        },
-      })
-    );
-  } catch (err: any) {
-    logger.error("Failed to update connection heartbeat", {
-      error: err.message,
-    });
-  }
-}
 
 
